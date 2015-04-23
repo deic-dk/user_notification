@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<info>
+   <id>user_notification</id>
+   <name>user_notification</name>
+   <description>This app displays notifications next to the search bar</description>
+   <version>0.1</version>
+   <licence>AGPL</licence>
+   <author>Christian Brinch, DeIC (cbri@dtu.dk)</author>
+   <require>7</require>
+</info>
