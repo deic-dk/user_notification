@@ -32,6 +32,7 @@ function timeDifference(current, previous) {
 		return Math.round(elapsed/msPerYear ) + ' years';   
 	}
 }
+
 $(document).ready(function() {
 	var parent=$('<li class="notifications dropdown">');
 	$('header').find('ul.navbar-nav').prepend(parent);
@@ -71,7 +72,7 @@ $(document).ready(function() {
 							row.addClass('read');
 						};						
 						row.children('a').attr('href',item.link);
-						row.find('.avatardiv').children('img').attr('src','/index.php/avatar/'+item.user);					
+						row.find('.avatardiv').children('img').attr('src', '/index.php/avatar/'+item.user);					
 						row.find('div.text-dark-gray').html(item.subjectformatted.full);
 						row.find('i.text-bg').addClass('icon-doc');
 						row.find('span.text-light-gray').html(timeDifference(Date.now(),item.timestamp*1000.) ); 
@@ -79,6 +80,15 @@ $(document).ready(function() {
 						$('li.notifications').children('ul').append(row);
 					}
 				});
+				var row=$('li.notifications').find('li.template').clone();
+				row.removeClass('template');
+				row.addClass('result');
+				row.children('a').attr('href', OC.generateUrl('/apps/activity'));				
+				row.find('.row').children().remove();				
+				row.find('.row').append('<div class="col-sm-11 col-sm-offset-1 col-xs-10 col-sx-offset-2"><div class="text-dark-gray"><i class="icon-flash deic_green icon"></i>All Activities</div></div>');
+				row.removeClass('hidden');
+				$('li.notifications').children('ul').append(row);
+
 			}
 		});
 		$.ajax({
@@ -89,3 +99,5 @@ $(document).ready(function() {
 		});
 	});
 })
+
+
