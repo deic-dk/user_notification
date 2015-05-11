@@ -20,7 +20,7 @@ $page = $data->getPageFromParam() - 1;
 $filter = $data->getFilterFromParam();
 
 // Read the next 30 items for the endless scrolling
-$count = 30;
+$count = 5;
 $activity = $data->read($groupHelper, $page * $count, $count, $filter);
 
 
