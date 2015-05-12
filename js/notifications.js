@@ -72,11 +72,11 @@ $(document).ready(function() {
 							row.addClass('read');
 						};						
 						row.children('a').attr('href',item.link);
-						row.find('.avatardiv').children('img').attr('src', '/index.php/avatar/'+item.user);					
+						row.find('.avatardiv').avatar(item.user, 28)
 						row.find('div.text-dark-gray').html(item.subjectformatted.full);
 						row.find('i.text-bg').addClass('icon-doc');
 						row.find('span.text-light-gray').html(timeDifference(Date.now(),item.timestamp*1000.) ); 
-						row.removeClass('hidden');
+						row.removeClass('hidden');						
 						$('li.notifications').children('ul').append(row);
 					}
 				});

@@ -11,7 +11,7 @@
 	  <a href="#" title="" class="text-sm">
 		<div class="row">
 		  <div class="col-sm-1 col-xs-2">
-			<div class="avatardiv"><img src=""></div>
+			<div class="avatardiv"></div>
 		  </div>  
 		  <div class="col-sm-8 col-xs-10">
 			<div class="text-dark-gray"></div>
