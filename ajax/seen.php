@@ -8,8 +8,8 @@
 $user = OCP\User::getUser();
 
 $query = OCP\DB::prepare(
-	'UPDATE *PREFIX*user_notification '
-	. ' SET seen = TRUE '	
-	. ' FROM ( SELECT * FROM *PREFIX*activity ) AS B '	
-	. ' WHERE B.affecteduser = ? ');
+	'UPDATE `*PREFIX*user_notification` '
+	. ' SET `seen` = TRUE '	
+	. ' FROM ( SELECT * FROM `*PREFIX*activity` ) '	
+	. ' WHERE `*PREFIX*activity.affecteduser` = ? ');
 $result = $query->execute(array($user));
