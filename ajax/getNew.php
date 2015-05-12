@@ -1,11 +1,14 @@
 <?php
 
+require_once('apps/user_notification/lib/data.php');
+
 \OCP\JSON::checkLoggedIn();
 \OCP\JSON::checkAppEnabled('activity');
 \OCP\JSON::checkAppEnabled('user_notification');
 
 $l = \OCP\Util::getL10N('activity');
-$data = new \OCA\Activity\Data(\OC::$server->getActivityManager());
+$data = new \OCA\UserNotification\Data(\OC::$server->getActivityManager());
+
 $groupHelper = new \OCA\Activity\GroupHelper(
   \OC::$server->getActivityManager(),
   new \OCA\Activity\DataHelper(
@@ -16,12 +19,18 @@ $groupHelper = new \OCA\Activity\GroupHelper(
   true
 );
 
+$userSettings = new \OCA\Activity\UserSettings(
+	\OC::$server->getActivityManager(),
+	new \OCP\IConfig,
+	$data);
+
+
 $page = $data->getPageFromParam() - 1;
 $filter = $data->getFilterFromParam();
 
 // Read the next 30 items for the endless scrolling
 $count = 5;
-$activity = $data->read($groupHelper, $page * $count, $count, $filter);
+$activity = $data->read($groupHelper, $userSettings, $page * $count, $count, $filter);
 
 
 if($activity != null){
