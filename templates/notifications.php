@@ -16,6 +16,7 @@
 		  <div class="col-sm-8 col-xs-10">
 			<div class="text-dark-gray"></div>
 			<span class="fileicon"><i class="text-bg">&nbsp;</i></span>
+			<span class="text-dark-gray"></span>
 		  </div>
 		  <div class="col-sm-3 text-right">
 			<span class="text-light-gray"></span>
