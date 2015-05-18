@@ -91,6 +91,7 @@ function ext2cssClass (filename) {
 		return 'icon-doc'
 	}
 }
+
 function replaceFilename(str, filename){
 	var needle;
 	if (filename.toLowerCase().indexOf('.') < 0){
@@ -100,6 +101,38 @@ function replaceFilename(str, filename){
 	}
 	str = str.replace(filename.substring(1), needle);
 	return str;
+}
+
+function replaceGroupname(str, filename){
+	str = str.split('group');
+	str = str[0]+'a group'
+	return str;
+}
+
+function files_app(item,row){
+	row.find('.fileicon').children('i').removeClass('icon-doc').addClass(ext2cssClass(item.file));
+	row.find('div.text-dark-gray').html(replaceFilename(item.subjectformatted.full,item.file));
+	row.find('span.text-dark-gray').html(item.file.substring(1));
+	return row;
+}
+
+function user_group_admin_app(item,row){
+	row.find('.fileicon').children('i').removeClass('icon-doc text-bg').addClass('icon-users deic_green icon');
+	row.find('div.text-dark-gray').html(replaceGroupname(item.subjectformatted.full,item.file));
+	row.find('span.text-dark-gray').html(item.subjectparams[0]);
+	return row;
+}
+
+function process(item,row){
+	switch(item.app){
+		case 'files':
+			return files_app(item,row);
+			break;
+		case 'user_group_admin':
+			return user_group_admin_app(item,row);
+			break;
+		default:
+	}
 }
 
 $(document).ready(function() {
@@ -139,13 +172,10 @@ $(document).ready(function() {
 							row.addClass('unread');
 						}else{
 							row.addClass('read');
-						};						
+						};			
 						row.children('a').attr('href',item.link);
-						row.find('.fileicon').children('i').removeClass('icon-doc').addClass(ext2cssClass(item.file));
 						row.find('.avatardiv').avatar(item.user, 28)
-						row.find('div.text-dark-gray').html(replaceFilename(item.subjectformatted.full,item.file));
-						row.find('span.text-dark-gray').html(item.file.substring(1));
-						row.find('i.text-bg').addClass('icon-doc');
+						row = process(item,row);						
 						row.find('span.text-light-gray').html(timeDifference(Date.now(),item.timestamp*1000.) ); 
 						row.removeClass('hidden');						
 						$('li.notifications').children('ul').append(row);
