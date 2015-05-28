@@ -7,7 +7,7 @@
     </a>
 
 	<ul class="dropdown-menu pull-right">
-	  <li class="template hidden"i style="max-width:400px;">
+	  <li class="template hidden result"i style="max-width:400px;">
 	  <a href="#" title="" class="text-sm">
 		<div class="row">
 		  <div class="col-sm-1 col-xs-2">
@@ -16,7 +16,7 @@
 		  <div class="col-sm-8 col-xs-10">
 			<div class="text-dark-gray"></div>
 			<span class="fileicon"><i class="text-bg">&nbsp;</i></span>
-			<span class="text-dark-gray"></span>
+			<span class="text-dark-gray notification-name"></span>
 		  </div>
 		  <div class="col-sm-3 text-right">
 			<span class="text-light-gray"></span>

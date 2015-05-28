@@ -73,6 +73,7 @@ function getExtensions(){
 				['.rar','icon-file-archive'],
 				// code
 				['.m','icon-file-code'],
+				['.sh','icon-file-code'],
 				['.py','icon-file-code']];
 	return ext;
 }
@@ -92,47 +93,118 @@ function ext2cssClass (filename) {
 	}
 }
 
-function replaceFilename(str, filename){
-	var needle;
+function replaceFilename(item, filename){
+	var needle = item.subject.split('_')[0];
+	str = item.subjectformatted.full.split(needle)[0]+needle;
+
+	var folderfile;
 	if (filename.toLowerCase().indexOf('.') < 0){
-		needle = 'a folder';
+		folderfile = 'a folder';
 	}else{
-		needle = 'a file';
+		folderfile = 'a file';
 	}
-	str = str.replace(filename.substring(1), needle);
+	str = str+' '+folderfile;
+
+	switch(item.subject){
+		case 'created_public':
+			str = folderfile+' was'+item.subjectformatted.full.split('was')[1];
+			str[0] = 'A';
+			break;
+		case 'shared_user_self':
+		case 'shared_group_self':
+		case 'shared_with_by':
+				str=str+' with'+item.subjectformatted.full.split('with')[1];
+			break;
+		case 'shared_link_self':
+				str=str+' via'+item.subjectformatted.full.split('via')[1];
+			break;
+	}
 	return str;
 }
 
-function replaceGroupname(str, filename){
-	str = str.split('group');
-	str = str[0]+'a group'
+'You have been invited to group %1$s by %2$s<div id="invite_div" style="display:none"><a href="#" id="accept" class="btn btn-default btn-flat" value = \'%1$s\'>Accept</a><a href="#" class="btn btn-default btn-flat" id="decline" value = \'%1$s\'>Decline</a></div>'
+
+function replaceGroupname(item, filename){
+	str = item.subjectformatted.full;
+	switch(item.subject){
+		case 'created_self':
+		case 'deleted_self':
+		case 'shared_user_self':
+		case 'deleted_by':
+			str = str.split('group');
+			str = str[0]+'a group';
+			break;
+		case 'shared_with_by':
+			if(str.indexOf("joined") > -1 || str.indexOf("invitation") > -1){
+				str.replace(' group','');
+				str.replace(filename,'a group');
+			}else{
+				str = str.split('group');
+				str = str[0]+'a group';
+			}
+			break;
+	}
+	
 	return str;
 }
 
-function files_app(item,row){
-	row.find('.fileicon').children('i').removeClass('icon-doc').addClass(ext2cssClass(item.file));
-	row.find('div.text-dark-gray').html(replaceFilename(item.subjectformatted.full,item.file));
-	row.find('span.text-dark-gray').html(item.file.substring(1));
+function files_app(item,filename,row){
+	row.find('.fileicon').children('i').removeClass('icon-doc').addClass(ext2cssClass(filename));
+	row.find('div.text-dark-gray').html(replaceFilename(item,filename));
+	row.find('.notification-name').html(filename.substring(1));
 	return row;
 }
 
-function user_group_admin_app(item,row){
-	row.find('.fileicon').children('i').removeClass('icon-doc text-bg').addClass('icon-users deic_green icon');
-	row.find('div.text-dark-gray').html(replaceGroupname(item.subjectformatted.full,item.file));
-	row.find('span.text-dark-gray').html(item.subjectparams[0]);
+function user_group_admin_app(item,filename,row){
+	row.find('.fileicon').children('i').removeClass('icon-doc text-bg').addClass('icon-users deic_green icon').attr('style','color: rgb(181, 204, 45);');
+	row.find('div.text-dark-gray').html(replaceGroupname(item,filename));
+	
+	if(item.subject == 'shared_with_by' && item.subjectformatted.full.indexOf('id="invite_div"') > -1){
+		row.find('.notification-name').html(item.subjectparams[0]+' by '+item.user);
+		row.find('.notification-name').after( '<div id'+item.subjectformatted.full.split('<div id')[1] );
+	}else{
+		row.find('.notification-name').html(item.subjectparams[0]);
+	}
 	return row;
 }
 
-function process(item,row){
+function processCase(item,filename,row){
 	switch(item.app){
 		case 'files':
-			return files_app(item,row);
+			return files_app(item,filename,row);
 			break;
 		case 'user_group_admin':
-			return user_group_admin_app(item,row);
+			return user_group_admin_app(item,filename,row);
 			break;
 		default:
 	}
+}
+
+function addRow(item,filename){
+	var row=$('li.notifications').find('li.template').clone();
+	row.removeClass('template');
+	if (item['seen']==false) {
+		row.addClass('unread');
+	}else{
+		row.addClass('read');
+	};
+	row.removeClass('hidden');
+	row.children('a').attr('href',item.link);
+	row.find('.avatardiv').avatar(item.user, 28)
+	row.find('span.text-light-gray').html(timeDifference(Date.now(),item.timestamp*1000.) ); 
+	row = processCase(item,filename,row);
+	$('li.notifications').children('ul').append(row);
+}
+
+function addActivityRow(){
+	var row=$('li.notifications').find('li.template').clone();
+	row.removeClass('template');
+	row.addClass('result');
+	row.children('a').attr('href', OC.generateUrl('/apps/activity'));				
+	row.find('.row').children().remove();				
+	row.find('.row').append('<div class="col-sm-11 col-sm-offset-1 col-xs-10 col-sx-offset-2"><div class="text-dark-gray"><i class="icon-flash deic_green icon"></i>All Activities</div></div>');
+	row.removeClass('hidden');
+	$('li.notifications').children('ul').append(row);
 }
 
 $(document).ready(function() {
@@ -163,33 +235,19 @@ $(document).ready(function() {
 			url: OC.filePath('user_notification', 'ajax', 'getNew.php'),
 			success: function(result) {
 				$('li.notifications').find('li:not(.template)').remove();
+				//addActivityRow(); // this is fixing a bug that the first Item is never displayed
 				$.each(result, function(index,item) {
 					if(index!='status'){
-						var row=$('li.notifications').find('li.template').clone();
-						row.removeClass('template');
-						row.addClass('result');
-						if (item['seen']==false) {
-							row.addClass('unread');
+						if($.isArray(item.subjectparams[0])){
+							$.each(item.subjectparams[0], function(index2,filename){
+								addRow(item,filename);
+							});
 						}else{
-							row.addClass('read');
-						};			
-						row.children('a').attr('href',item.link);
-						row.find('.avatardiv').avatar(item.user, 28)
-						row = process(item,row);						
-						row.find('span.text-light-gray').html(timeDifference(Date.now(),item.timestamp*1000.) ); 
-						row.removeClass('hidden');						
-						$('li.notifications').children('ul').append(row);
+							addRow(item,item.subjectparams[0]);
+						}		
 					}
 				});
-				var row=$('li.notifications').find('li.template').clone();
-				row.removeClass('template');
-				row.addClass('result');
-				row.children('a').attr('href', OC.generateUrl('/apps/activity'));				
-				row.find('.row').children().remove();				
-				row.find('.row').append('<div class="col-sm-11 col-sm-offset-1 col-xs-10 col-sx-offset-2"><div class="text-dark-gray"><i class="icon-flash deic_green icon"></i>All Activities</div></div>');
-				row.removeClass('hidden');
-				$('li.notifications').children('ul').append(row);
-
+				addActivityRow();
 			}
 		});
 		$.ajax({
