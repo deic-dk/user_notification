@@ -122,7 +122,6 @@ function replaceFilename(item, filename){
 	return str;
 }
 
-'You have been invited to group %1$s by %2$s<div id="invite_div" style="display:none"><a href="#" id="accept" class="btn btn-default btn-flat" value = \'%1$s\'>Accept</a><a href="#" class="btn btn-default btn-flat" id="decline" value = \'%1$s\'>Decline</a></div>'
 
 function replaceGroupname(item, filename){
 	str = item.subjectformatted.full;
@@ -136,13 +135,13 @@ function replaceGroupname(item, filename){
 			break;
 		case 'shared_with_by':
 			if(str.indexOf("joined") > -1 || str.indexOf("invitation") > -1){
-				str.replace(' group','');
-				str.replace(filename,'a group');
-			}else{
 				str = str.split('group');
-				str = str[0]+'a group';
+                str = str[0]+'a group';
+			}else{
+				str = str.split('invited to');
+				temp = str[1].split('<div');
+				str = str[0]+'invited to a group<div'+temp[1];
 			}
-			break;
 	}
 	
 	return str;
@@ -158,7 +157,7 @@ function files_app(item,filename,row){
 function user_group_admin_app(item,filename,row){
 	row.find('.fileicon').children('i').removeClass('icon-doc text-bg').addClass('icon-users deic_green icon').attr('style','color: rgb(181, 204, 45);');
 	row.find('div.text-dark-gray').html(replaceGroupname(item,filename));
-	
+	$(document).find('#invite_div').css('display', 'block');
 	if(item.subject == 'shared_with_by' && item.subjectformatted.full.indexOf('id="invite_div"') > -1){
 		row.find('.notification-name').html(item.subjectparams[0]+' by '+item.user);
 		row.find('.notification-name').after( '<div id'+item.subjectformatted.full.split('<div id')[1] );
@@ -239,8 +238,8 @@ $(document).ready(function() {
 				$.each(result, function(index,item) {
 					if(index!='status'){
 						if($.isArray(item.subjectparams[0])){
-							$.each(item.subjectparams[0], function(index2,filename){
-								addRow(item,filename);
+							$.each(item.subjectparams[0], function(index2,name){
+								addRow(item,name);
 							});
 						}else{
 							addRow(item,item.subjectparams[0]);
@@ -258,5 +257,4 @@ $(document).ready(function() {
 		});
 	});
 })
-
 
