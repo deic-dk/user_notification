@@ -9,27 +9,27 @@ function timeDifference(current, previous) {
 	var elapsed = current - previous;
 
 	if (elapsed < msPerMinute) {
-		return Math.round(elapsed/1000.) + ' seconds';   
+		return Math.round(elapsed/1000.) + ' seconds';
 	}
 
 	else if (elapsed < msPerHour) {
-		return Math.round(elapsed/msPerMinute) + ' minutes';   
+		return Math.round(elapsed/msPerMinute) + ' minutes';
 	}
 
 	else if (elapsed < msPerDay ) {
-		return Math.round(elapsed/msPerHour ) + ' hours';   
+		return Math.round(elapsed/msPerHour ) + ' hours';
 	}
 
 	else if (elapsed < msPerMonth) {
-		return Math.round(elapsed/msPerDay) + ' days';   
+		return Math.round(elapsed/msPerDay) + ' days';
 	}
 
 	else if (elapsed < msPerYear) {
-		return Math.round(elapsed/msPerMonth) + ' months';   
+		return Math.round(elapsed/msPerMonth) + ' months';
 	}
 
 	else {
-		return Math.round(elapsed/msPerYear ) + ' years';   
+		return Math.round(elapsed/msPerYear ) + ' years';
 	}
 }
 
@@ -143,8 +143,21 @@ function replaceGroupname(item, filename){
 				str = str[0]+'invited to a group<div'+temp[1];
 			}
 	}
-	
+
 	return str;
+}
+
+function replaceInvoicename(item){
+  str = item.subjectformatted.full;
+  switch(item.subject){
+  	case 'created_self':
+	  str = 'You have a new invoice for';
+	  break;
+	case 'completed_self':
+	  str = 'You completed a payment';
+	  break;
+  }
+  return str;
 }
 
 function files_app(item,filename,row){
@@ -164,7 +177,15 @@ function user_group_admin_app(item,filename,row){
 	}else{
 		row.find('.notification-name').html(item.subjectparams[0]);
 	}
+	row.children('a').attr('href','/index.php/apps/user_group_admin');
 	return row;
+}
+
+function files_accounting_app(item,filename,row){
+	row.find('div.text-dark-gray').html(replaceInvoicename(item));
+	row.find('.fileicon').children('i').removeClass('icon-doc').addClass('icon-chart-area');
+	row.find('.notification-name').html(item.subjectparams[0]);
+    return row;
 }
 
 function processCase(item,filename,row){
@@ -174,6 +195,9 @@ function processCase(item,filename,row){
 			break;
 		case 'user_group_admin':
 			return user_group_admin_app(item,filename,row);
+			break;
+		case 'files_accounting':
+			return files_accounting_app(item, filename, row);
 			break;
 		default:
 	}
@@ -190,7 +214,7 @@ function addRow(item,filename){
 	row.removeClass('hidden');
 	row.children('a').attr('href',item.link);
 	row.find('.avatardiv').avatar(item.user, 28)
-	row.find('span.text-light-gray').html(timeDifference(Date.now(),item.timestamp*1000.) ); 
+	row.find('span.text-light-gray').html(timeDifference(Date.now(),item.timestamp*1000.) );
 	row = processCase(item,filename,row);
 	$('li.notifications').children('ul').append(row);
 }
@@ -199,8 +223,8 @@ function addActivityRow(){
 	var row=$('li.notifications').find('li.template').clone();
 	row.removeClass('template');
 	row.addClass('result');
-	row.children('a').attr('href', OC.generateUrl('/apps/activity'));				
-	row.find('.row').children().remove();				
+	row.children('a').attr('href', OC.generateUrl('/apps/activity'));
+	row.find('.row').children().remove();
 	row.find('.row').append('<div class="col-sm-11 col-sm-offset-1 col-xs-10 col-sx-offset-2"><div class="text-dark-gray"><i class="icon-flash deic_green icon"></i>All Activities</div></div>');
 	row.removeClass('hidden');
 	$('li.notifications').children('ul').append(row);
@@ -243,7 +267,7 @@ $(document).ready(function() {
 							});
 						}else{
 							addRow(item,item.subjectparams[0]);
-						}		
+						}
 					}
 				});
 				addActivityRow();
@@ -257,4 +281,3 @@ $(document).ready(function() {
 		});
 	});
 })
-
