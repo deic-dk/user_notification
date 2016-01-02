@@ -36,6 +36,6 @@ $activity = $data->read($groupHelper, $userSettings, $page * $count, $count, $fi
 if($activity != null){
   OCP\JSON::success($activity);
 } else {
-  OCP\JSON::success(0);
+  OCP\JSON::success();
 }
 
