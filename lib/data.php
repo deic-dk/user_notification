@@ -7,6 +7,7 @@ require_once('activity/lib/data.php');
 class Data extends OCA\Activity\Data
 {
 	const PRIORITY_SEEN	= 0;
+	const TYPE_SYNC_FINISHED = 'sync_finished';
 
 	public function __construct(\OCP\Activity\IManager $activityManager){
 		$this->activityManager = $activityManager;
