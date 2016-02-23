@@ -4,11 +4,12 @@ namespace OCA\UserNotification;
 
 require_once('activity/lib/data.php');
 
-class Data extends OCA\Activity\Data
+class Data extends \OCA\Activity\Data
 {
 	const PRIORITY_SEEN	= 0;
 	const TYPE_SYNC_FINISHED = 'sync_finished';
-
+	const TYPE_SYNC_STARTED = 'sync_started';
+	
 	public function __construct(\OCP\Activity\IManager $activityManager){
 		$this->activityManager = $activityManager;
 	}
@@ -54,7 +55,7 @@ class Data extends OCA\Activity\Data
 		return $result;
 	}
 	
-	public function read(GroupHelper $groupHelper, $start, $count, $filter = 'all') {
+	public function read(\OCA\Activity\GroupHelper $groupHelper, $start, $count, $filter = 'all') {
 		if(!\OCP\App::isEnabled('files_sharding') || \OCA\FilesSharding\Lib::isMaster()){
 			$result = parent::read($groupHelper, $start, $count, $filter);
 		}
