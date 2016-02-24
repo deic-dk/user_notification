@@ -45,6 +45,7 @@ class OC_UserNotification_Hooks {
 		}
 		else{
 			$row = $result->fetchRow();
+			unset($row['activity_id']);
 			return \OCA\UserNotification\Data::add($row);
 		}
 
