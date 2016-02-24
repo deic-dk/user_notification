@@ -17,30 +17,36 @@ class Data extends \OCA\Activity\Data
 	public static function setPriority($user, $priority, $activityId=null){
 		$sql = 'UPDATE `*PREFIX*activity` SET `priority` = ? WHERE `affecteduser` = ?'.
 			(empty($activityId)?'':' AND `activity_id` = ?');
-		$query = OCP\DB::prepare($sql);
+		$query = \OCP\DB::prepare($sql);
 		$result = $query->execute(empty($activityId)?array($priority, $user):
 																									array($priority, $user, $activityId));
 		return $result;
 	}
 	
-	public function dbMarkAllSeen($user){
+	public static function dbMarkAllSeen($user){
 		return self::setPriority($user, self::PRIORITY_SEEN);
 	}
 	
-	public function markAllSeen($user){
+	public static function markAllSeen($user){
+		$localResult = self::dbMarkAllSeen($user);
 		if(!\OCP\App::isEnabled('files_sharding') || \OCA\FilesSharding\Lib::isMaster()){
-			$result = self::dbMarkAllSeen($user);
+			return $localResult;
 		}
 		else{
-			$result = \OCA\FilesSharding\Lib::ws('seen', array('user'=>$user), false, true, null,
+			$masterResult = $result && \OCA\FilesSharding\Lib::ws('seen', array('user'=>$user), false, true, null,
 					'user_notification');
 		}
-		return $result;
+		return $localResult && $masterResult;
 	}
 	
 	public static function dbAdd($row){
 		$colums = '`'.implode('`, `', array_keys($row)).'`';
-		$query = \OCP\DB::prepare('INSERT INTO `*PREFIX*activity` (' . $colums . ') VALUES ');
+		$questionMarks = " (";
+		for($i=0; $i<count($row); ++$i){
+			$questionMarks .= ($i==0?"?":", ?");
+		}
+		$questionMarks .= ")";
+		$query = \OCP\DB::prepare('INSERT INTO `*PREFIX*activity` (' . $colums . ') VALUES'.$questionMarks);
 		$result = $query->execute(array_values($row));
 		return $result;
 	}
@@ -50,20 +56,22 @@ class Data extends \OCA\Activity\Data
 			$result = self::dbAdd($row);
 		}
 		else{
-			$result = \OCA\FilesSharding\Lib::ws('addRow', $row, true, true, null, 'user_notification');
+			$result = \OCA\FilesSharding\Lib::ws('addRow', $row, true, true, null, 'user_notification', true);
 		}
 		return $result;
 	}
 	
 	public function read(\OCA\Activity\GroupHelper $groupHelper, $start, $count, $filter = 'all') {
+		$localResult = parent::read($groupHelper, $start, $count, $filter);
 		if(!\OCP\App::isEnabled('files_sharding') || \OCA\FilesSharding\Lib::isMaster()){
-			$result = parent::read($groupHelper, $start, $count, $filter);
+			return $localResult;
 		}
 		else{
 			$arr = array('start'=>$start, 'count'=>$count, 'filter'=>$filter);
-			$result = \OCA\FilesSharding\Lib::ws('read', $arr, false, true, null, 'user_notification');
+			$masterResult = \OCA\FilesSharding\Lib::ws('read', $arr, false, true, null, 'user_notification');
+			$result = array_unique(array_merge($localResult, $masterResult));
+			return $result;
 		}
-		return $result;
 	}
 	
 	

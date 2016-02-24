@@ -1,6 +1,7 @@
 <?php
 
 require_once 'user_notification/lib/data.php';
+require_once 'user_notification/lib/grouphelper.php';
 
 \OCP\JSON::checkLoggedIn();
 \OCP\JSON::checkAppEnabled('activity');

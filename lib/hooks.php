@@ -26,9 +26,7 @@ class OC_UserNotification_Hooks {
 			return true;
 		}
  		
-		$sql = 'SELECT * FROM `*PREFIX*activity` WHERE `app` = ? AND `subject` = ? AND \
-				`user` = ? AND `affecteduser` = ? AND `message` = ? AND `file` = ? AND `link` = ? AND \
-				`priority` = ? AND `type` = ? ORDER BY `timestamp` DESC LIMIT 1';
+		$sql = 'SELECT * FROM `*PREFIX*activity` WHERE `app` = ? AND `subject` = ? AND `user` = ? AND `affecteduser` = ? AND `message` = ? AND `file` = ? AND `link` = ? AND `priority` = ? AND `type` = ? ORDER BY `timestamp` DESC LIMIT 1';
 		$query = \OCP\DB::prepare($sql);
 		$params = array($parameters['app'],
 						$parameters['subject'],

@@ -5,9 +5,9 @@ namespace OCA\UserNotification;
 require_once('activity/lib/grouphelper.php');
 require_once('user_notification/lib/data.php');
 
-class GroupHelper extends OCA\Activity\GroupHelper
+class GroupHelper extends \OCA\Activity\GroupHelper
 {
-	public function __construct(IManager $activityManager, DataHelper $dataHelper, $allowGrouping) {
+	public function __construct(\OCP\Activity\IManager $activityManager, \OCA\Activity\DataHelper $dataHelper, $allowGrouping) {
 		$this->allowGrouping = $allowGrouping;
 
 		$this->activityManager = $activityManager;
