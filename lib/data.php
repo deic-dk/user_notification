@@ -7,8 +7,6 @@ require_once('activity/lib/data.php');
 class Data extends \OCA\Activity\Data
 {
 	const PRIORITY_SEEN	= 0;
-	const TYPE_SYNC_FINISHED = 'sync_finished';
-	const TYPE_SYNC_STARTED = 'sync_started';
 	
 	public function __construct(\OCP\Activity\IManager $activityManager){
 		$this->activityManager = $activityManager;
@@ -33,7 +31,7 @@ class Data extends \OCA\Activity\Data
 			return $localResult;
 		}
 		else{
-			$masterResult = $result && \OCA\FilesSharding\Lib::ws('seen', array('user'=>$user), false, true, null,
+			$masterResult = $localResult && \OCA\FilesSharding\Lib::ws('seen', array('user'=>$user), false, true, null,
 					'user_notification');
 		}
 		return $localResult && $masterResult;
@@ -67,7 +65,8 @@ class Data extends \OCA\Activity\Data
 			return $localResult;
 		}
 		else{
-			$arr = array('start'=>$start, 'count'=>$count, 'filter'=>$filter);
+			$user = \OCP\USER::getUser();
+			$arr = array('user'=>$user, 'start'=>$start, 'count'=>$count, 'filter'=>$filter);
 			$masterResult = \OCA\FilesSharding\Lib::ws('read', $arr, false, true, null, 'user_notification');
 			$result = array_unique(array_merge($localResult, $masterResult));
 			return $result;

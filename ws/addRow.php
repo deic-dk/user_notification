@@ -12,9 +12,10 @@ if(!OCA\FilesSharding\Lib::checkIP()){
 	exit;
 }
 
-if(!isset($_POST['activity_id']) || !isset($_POST['user']) || !isset($_POST['affecteduser'])){
-	http_response_code(401);
-	exit;
+if(!isset($_POST['app']) || !isset($_POST['affecteduser']) || !isset($_POST['subject'])){
+	//http_response_code(401);
+	//exit;
+	$ret['error'] = "Missing parameters";
 }
 
 if(!OCA\UserNotification\Data::dbAdd($_POST)){

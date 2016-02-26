@@ -11,9 +11,18 @@ if(!OCA\FilesSharding\Lib::checkIP()){
 	exit;
 }
 
+$user = $_GET['user'];
 $start = $_GET['start'];
 $count = $_GET['count'];
 $filter = $_GET['filter'];
+
+if(!empty($user)){
+	\OC_User::setUserId($user);
+	\OC_Util::setupFS($user);
+}
+else{
+	\OCP\JSON::error();
+}
 
 $data = new OCA\UserNotification\Data(\OC::$server->getActivityManager());
 $l = \OCP\Util::getL10N('activity');
@@ -31,9 +40,9 @@ $groupHelper = new \OCA\UserNotification\GroupHelper(
 $ret = $data->read($groupHelper, $start, $count, $filter);
 
 if($ret===false || $ret===null){
-  OCP\JSON::error();
+  \OCP\JSON::error();
 }
 else{
-	OCP\JSON::encodedPrint($ret);
+	\OCP\JSON::encodedPrint($ret);
 }
 
