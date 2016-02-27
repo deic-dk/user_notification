@@ -22,7 +22,7 @@
 */
 
 require_once('user_notification/lib/data.php');
-require_once('user_notification/lib/grouphelper.php');
+require_once('activity/lib/grouphelper.php');
 
 // some housekeeping
 \OCP\JSON::checkLoggedIn();
@@ -30,7 +30,7 @@ require_once('user_notification/lib/grouphelper.php');
 
 $l = \OCP\Util::getL10N('activity');
 $data = new \OCA\UserNotification\Data(\OC::$server->getActivityManager());
-$groupHelper = new \OCA\UserNotification\GroupHelper(
+$groupHelper = new \OCA\activity\GroupHelper(
 	\OC::$server->getActivityManager(),
 	new \OCA\Activity\DataHelper(
 		\OC::$server->getActivityManager(),
