@@ -68,8 +68,12 @@ class Data extends \OCA\Activity\Data
 			$user = \OCP\USER::getUser();
 			$arr = array('user'=>$user, 'start'=>$start, 'count'=>$count, 'filter'=>$filter);
 			$masterResult = \OCA\FilesSharding\Lib::ws('read', $arr, false, true, null, 'user_notification');
-			$result = array_unique(array_merge($localResult, $masterResult));
-			return $result;
+			if(empty($localResult)){
+				return $masterResult;
+			}
+			else{
+				return array_unique(array_merge($localResult, $masterResult));
+			}
 		}
 	}
 	

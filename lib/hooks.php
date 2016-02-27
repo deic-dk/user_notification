@@ -31,12 +31,15 @@ class OC_UserNotification_Hooks {
 		$query = \OCP\DB::prepare($sql);
 		$params = array($parameters['app'],
 						$parameters['subject'],
+						$parameters['message'],
+						$parameters['subjectparams'],
+						$parameters['messageparams'],
 						$parameters['user'],
 						$parameters['affecteduser'],
-						$parameters['message'],
+						$parameters['timestamp'],
 						$parameters['file'],
 						$parameters['link'],
-						$parameters['prio'],
+						$parameters['priority'],
 						$parameters['type']);
 		$result = $query->execute($params);
 
