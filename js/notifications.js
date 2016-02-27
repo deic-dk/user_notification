@@ -1,3 +1,5 @@
+var PRIORITY_MIN = 0;
+
 function timeDifference(current, previous) {
 
 	var msPerMinute = 60. * 1000;
@@ -188,6 +190,12 @@ function files_accounting_app(item,filename,row){
     return row;
 }
 
+function files_sharding_app(item,filename,row){
+	row.find('div.text-dark-gray').html(item.subject);
+	row.find('.avatardiv').remove();
+	return row;
+}
+
 function processCase(item,filename,row){
 	switch(item.app){
 		case 'files':
@@ -199,14 +207,18 @@ function processCase(item,filename,row){
 		case 'files_accounting':
 			return files_accounting_app(item, filename, row);
 			break;
+		case 'files_sharding':
+			return files_sharding_app(item, filename, row);
+			break;
 		default:
+			return row;
 	}
 }
 
 function addRow(item,filename){
 	var row=$('li.notifications').find('li.template').clone();
 	row.removeClass('template');
-	if (item['seen']==false) {
+	if (parseInt(item['priority'], 10)>PRIORITY_MIN) {
 		row.addClass('unread');
 	}else{
 		row.addClass('read');
@@ -240,7 +252,7 @@ $(document).ready(function() {
 				var count=0;
 				for (i = 0; i < Object.keys(result).length-1; i++) {
 					var row = result[i];
-				    if(row['seen']==false){
+				    if(parseInt(row['priority'], 10)>PRIORITY_MIN){
 				    	count +=1;
 				    }
 				}
