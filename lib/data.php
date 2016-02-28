@@ -37,28 +37,6 @@ class Data extends \OCA\Activity\Data
 		return $localResult && $masterResult;
 	}
 	
-	public static function dbAdd($row){
-		$colums = '`'.implode('`, `', array_keys($row)).'`';
-		$questionMarks = " (";
-		for($i=0; $i<count($row); ++$i){
-			$questionMarks .= ($i==0?"?":", ?");
-		}
-		$questionMarks .= ")";
-		$query = \OCP\DB::prepare('INSERT INTO `*PREFIX*activity` (' . $colums . ') VALUES'.$questionMarks);
-		$result = $query->execute(array_values($row));
-		return $result;
-	}
-	
-	public static function add($row){
-		if(!\OCP\App::isEnabled('files_sharding') || \OCA\FilesSharding\Lib::isMaster()){
-			$result = self::dbAdd($row);
-		}
-		else{
-			$result = \OCA\FilesSharding\Lib::ws('addRow', $row, true, true, null, 'user_notification', true);
-		}
-		return $result;
-	}
-	
 	public function read(\OCA\Activity\GroupHelper $groupHelper, $start, $count, $filter = 'all') {
 		$localResult = parent::read($groupHelper, $start, $count, $filter);
 		if(!\OCP\App::isEnabled('files_sharding') || \OCA\FilesSharding\Lib::isMaster()){
@@ -85,7 +63,7 @@ class Data extends \OCA\Activity\Data
 			$user = \OCP\USER::getUser();
 		}
 		
-		if(!\OCP\App::isEnabled('files_sharding') || \OCA\FilesSharding\Lib::isMaster() ||
+		if(!\OCP\App::isEnabled('files_sharding') ||  \OCA\FilesSharding\Lib::isMaster() ||
 				!in_array($type, array(
 					self::TYPE_SHARED,
 					self::TYPE_SHARE_EXPIRED,
@@ -93,20 +71,19 @@ class Data extends \OCA\Activity\Data
 					self::TYPE_SHARE_CREATED,
 					self::TYPE_SHARE_CHANGED,
 					self::TYPE_SHARE_DELETED,
-					self::TYPE_SHARE_RESHARED)) &&
-					(!\OCP\App::isEnabled('files_sharding') ||
-						$type != \OCA\FilesSharding\Lib::TYPE_SERVER_SYNC)
+					self::TYPE_SHARE_RESHARED,
+					\OCA\FilesSharding\Lib::TYPE_SERVER_SYNC))
 		){
 			return parent::send($app, $subject, $subjectparams, $message,
 				$messageparams, $file, $link, $affecteduser, $type,
 				$prio);
 		}
 			
-		$row = array('app'=>$app, 'subject'=>$subject, 'subjectparams'=>$subjectparams,
-				'message'=>$message, 'messageparams'=>$messageparams, 'file'=>$file,
+		$row = array('app'=>$app, 'subject'=>$subject, 'subjectparams'=>serialize($subjectparams),
+				'message'=>$message, 'messageparams'=>serialize($messageparams), 'file'=>$file,
 				'link'=>$link, 'affecteduser'=>$affecteduser, 'type'=>$type,
 				'priority'=>$prio, 'user'=>$user);
-		return self::add($row);
+		return \OCA\FilesSharding\Lib::ws('send', $row, true, true, null, 'user_notification', true);;
 		
 	}
 	
