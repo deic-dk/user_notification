@@ -35,7 +35,7 @@ else{
 	\OC_User::setUserId($user);
 	\OC_Util::setupFS($user);
 	
-	$success = \OCA\activity\Data::send($app, $subject, unzerialize($subjectparams), $message,
+	$success = \OCA\activity\Data::send($app, $subject, unserialize($subjectparams), $message,
 		unserialize($messageparams), $file, $link, $affecteduser, $type,
 		$priority, $user);
 	$ret['success'] = $success;
