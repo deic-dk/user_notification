@@ -87,13 +87,13 @@ class Data extends \OCA\Activity\Data
 		
 		if(!\OCP\App::isEnabled('files_sharding') || \OCA\FilesSharding\Lib::isMaster() ||
 				!in_array($parameters['type'], array(
-					OCA\UserNotification\Data::TYPE_SHARED,
-					OCA\UserNotification\Data::TYPE_SHARE_EXPIRED,
-					OCA\UserNotification\Data::TYPE_SHARE_UNSHARED,
-					OCA\UserNotification\Data::TYPE_SHARE_CREATED,
-					OCA\UserNotification\Data::TYPE_SHARE_CHANGED,
-					OCA\UserNotification\Data::TYPE_SHARE_DELETED,
-					OCA\UserNotification\Data::TYPE_SHARE_RESHARED) &&
+					self::TYPE_SHARED,
+					self::TYPE_SHARE_EXPIRED,
+					self::TYPE_SHARE_UNSHARED,
+					self::TYPE_SHARE_CREATED,
+					self::TYPE_SHARE_CHANGED,
+					self::TYPE_SHARE_DELETED,
+					self::TYPE_SHARE_RESHARED) &&
 				(!\OCP\App::isEnabled('files_sharding') ||
 						$parameters['type'] != \OCA\FilesSharding\Lib::TYPE_SERVER_SYNC))
 		){
