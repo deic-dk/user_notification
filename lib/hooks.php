@@ -20,7 +20,6 @@ class OC_UserNotification_Hooks {
 				$parameters['type'] != OCA\UserNotification\Data::TYPE_SHARE_CHANGED &&
 				$parameters['type'] != OCA\UserNotification\Data::TYPE_SHARE_DELETED &&
 				$parameters['type'] != OCA\UserNotification\Data::TYPE_SHARE_RESHARED &&
-				$parameters['type'] != OCA\UserNotification\Data::TYPE_SYNC_STARTED &&
 				(!\OCP\App::isEnabled('files_sharding') ||
 						$parameters['type'] != \OCA\FileSharding\Lib::TYPE_SERVER_SYNC)
 		){
