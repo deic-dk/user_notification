@@ -86,7 +86,7 @@ class Data extends \OCA\Activity\Data
 		}
 		
 		if(!\OCP\App::isEnabled('files_sharding') || \OCA\FilesSharding\Lib::isMaster() ||
-				!in_array($parameters['type'], array(
+				!in_array($type, array(
 					self::TYPE_SHARED,
 					self::TYPE_SHARE_EXPIRED,
 					self::TYPE_SHARE_UNSHARED,
@@ -95,7 +95,7 @@ class Data extends \OCA\Activity\Data
 					self::TYPE_SHARE_DELETED,
 					self::TYPE_SHARE_RESHARED) &&
 				(!\OCP\App::isEnabled('files_sharding') ||
-						$parameters['type'] != \OCA\FilesSharding\Lib::TYPE_SERVER_SYNC))
+						$type != \OCA\FilesSharding\Lib::TYPE_SERVER_SYNC))
 		){
 			return parent::send($app, $subject, $subjectparams, $message,
 				$messageparams, $file, $link, $affecteduser, $type,
