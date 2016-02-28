@@ -12,4 +12,11 @@ if(!OCA\FilesSharding\Lib::checkIP()){
 
 $user = $_GET['user'];
 
-return OCA\UserNotification\Data::dbMarkAllSeen($user);
+$ret = OCA\UserNotification\Data::dbMarkAllSeen($user);
+
+if(!empty($user)){
+	OC_JSON::success($ret);
+}
+else{
+	OC_JSON::error($ret);
+}

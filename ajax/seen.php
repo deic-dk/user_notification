@@ -8,4 +8,12 @@ require_once('user_notification/lib/data.php');
 
 $user = OCP\User::getUser();
 
-return OCA\UserNotification\Data::markAllSeen($user);
+$ret = OCA\UserNotification\Data::markAllSeen($user);
+
+if(!empty($user)){
+	OC_JSON::success($ret);
+}
+else{
+	OC_JSON::error($ret);
+}
+

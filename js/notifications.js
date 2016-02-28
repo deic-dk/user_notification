@@ -9,30 +9,39 @@ function timeDifference(current, previous) {
 	var msPerYear = msPerDay * 365.;
 
 	var elapsed = current - previous;
-
+	var relapsed;
+	var unit;
+	
 	if (elapsed < msPerMinute) {
-		return Math.round(elapsed/1000.) + ' seconds';
+		relapsed = Math.round(elapsed/1000.) ;
+		unit = ' second';
 	}
 
 	else if (elapsed < msPerHour) {
-		return Math.round(elapsed/msPerMinute) + ' minutes';
+		relapsed = Math.round(elapsed/msPerMinute)
+		unit = ' minute';
 	}
 
 	else if (elapsed < msPerDay ) {
-		return Math.round(elapsed/msPerHour ) + ' hours';
+		relapsed = Math.round(elapsed/msPerHour )
+		unit = ' hour';
 	}
 
 	else if (elapsed < msPerMonth) {
-		return Math.round(elapsed/msPerDay) + ' days';
+		relapsed = Math.round(elapsed/msPerDay)
+		unit = ' day';
 	}
 
 	else if (elapsed < msPerYear) {
-		return Math.round(elapsed/msPerMonth) + ' months';
+		relapsed = Math.round(elapsed/msPerMonth)
+		unit = ' month';
 	}
 
 	else {
-		return Math.round(elapsed/msPerYear ) + ' years';
+		relapsed = Math.round(elapsed/msPerYear )
+		unit = ' year';
 	}
+	return relapsed+unit+(relapsed==1?'':'s')
 }
 
 function getExtensions(){
@@ -193,6 +202,7 @@ function files_accounting_app(item,filename,row){
 function files_sharding_app(item,filename,row){
 	row.find('div.text-dark-gray').html(item.subject);
 	row.find('.avatardiv').remove();
+	row.children('a').attr('href','/index.php/apps/activity');
 	return row;
 }
 

@@ -24,57 +24,5 @@
 		</div>
 	  </a>
 	  </li>
-
-
-	  <!--
-		<li class="unread">
-			<a href="https://test.data.deic.dk//index.php/settings/personal" title="Benny has shar
-				<div class="row">
-					<div class="col-sm-1 col-xs-2">
-						<span class="fileicon"><i class="icon-file-excel text-bg">&nbsp;</i></span
-					</div>
-					<div class="col-sm-8 col-xs-10">
-						<div class="text-dark-gray">Benny has shared a file with you</div>
-						My file.odt
-					</div>
-					<div class="col-sm-3 text-right">
-						<span class="text-light-gray">27 min.</span>
-					</div>
-				</div>
-			</a>
-		</li>
-		<li>
-			<a href="https://test.data.deic.dk//index.php/settings/personal" title="Benny has shar
-				<div class="row">
-					<div class="col-sm-1 col-xs-2">
-						<i class="icon-users text-green text-bg">&nbsp;</i>
-					</div>
-					<div class="col-sm-8 col-xs-10">
-						<div class="text-dark-gray">Knud has added you to a group</div>
-						~@~\Scientists share~@~]
-					</div>
-					<div class="col-sm-3 text-right">
-						<span class="text-light-gray">6 hours</span>
-					</div>
-				</div>
-			</a>
-		</li>
-		<li>
-			<a href="https://test.data.deic.dk//index.php/settings/personal" title="Benny has shar
-				<div class="row">
-					<div class="col-sm-1 col-xs-2">
-						<span class="fileicon"><i class="icon-file-word text-bg">&nbsp;</i></span>
-					</div>
-					<div class="col-sm-8 col-xs-10">
-						<div class="text-dark-gray">Benny has shared a file with you</div>
-						My file.odt
-					</div>
-					<div class="col-sm-3 text-right">
-						<span class="text-light-gray">3 days</span>
-					</div>
-				</div>
-			</a>
-		</li>
--->
 	</ul>
 
