@@ -31,7 +31,7 @@ class Data extends \OCA\Activity\Data
 			return $localResult;
 		}
 		else{
-			$masterResult = $localResult && \OCA\FilesSharding\Lib::ws('seen', array('user'=>$user), false, true, null,
+			$masterResult = \OCA\FilesSharding\Lib::ws('seen', array('user'=>$user), false, true, null,
 					'user_notification');
 		}
 		return $localResult && $masterResult;
@@ -44,7 +44,8 @@ class Data extends \OCA\Activity\Data
 		}
 		else{
 			$user = \OCP\USER::getUser();
-			$arr = array('user'=>$user, 'start'=>$start, 'count'=>$count, 'filter'=>$filter);
+			$grouphelperClass = get_class($groupHelper);
+			$arr = array('user'=>$user, 'start'=>$start, 'count'=>$count, 'filter'=>$filter, 'grouphelper'=>$grouphelperClass);
 			$masterResult = \OCA\FilesSharding\Lib::ws('read', $arr, false, true, null, 'user_notification');
 			if(empty($localResult)){
 				return $masterResult;

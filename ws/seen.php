@@ -15,8 +15,8 @@ $user = $_GET['user'];
 $ret = OCA\UserNotification\Data::dbMarkAllSeen($user);
 
 if(!empty($user)){
-	OC_JSON::success($ret);
+	OC_JSON::success(array('data'=>$ret));
 }
 else{
-	OC_JSON::error($ret);
+	OC_JSON::error(array('data'=>$ret));
 }

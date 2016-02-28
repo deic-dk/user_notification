@@ -15,6 +15,7 @@ $user = $_GET['user'];
 $start = $_GET['start'];
 $count = $_GET['count'];
 $filter = $_GET['filter'];
+$grouphelper = isset($_GET['grouphelper'])?$_GET['grouphelper']:'\OCA\UserNotification\Data';
 
 if(!empty($user)){
 	\OC_User::setUserId($user);
@@ -26,7 +27,7 @@ else{
 
 $data = new OCA\UserNotification\Data(\OC::$server->getActivityManager());
 $l = \OCP\Util::getL10N('activity');
-$groupHelper = new \OCA\UserNotification\GroupHelper(
+$groupHelper = new $grouphelper(
   \OC::$server->getActivityManager(),
 	 new \OCA\Activity\DataHelper(
 		\OC::$server->getActivityManager(),

@@ -11,9 +11,9 @@ $user = OCP\User::getUser();
 $ret = OCA\UserNotification\Data::markAllSeen($user);
 
 if(!empty($user)){
-	OC_JSON::success($ret);
+	OC_JSON::success(array('data'=>$ret));
 }
 else{
-	OC_JSON::error($ret);
+	OC_JSON::error(array('data'=>$ret));
 }
 
