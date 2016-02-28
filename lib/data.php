@@ -93,9 +93,9 @@ class Data extends \OCA\Activity\Data
 					self::TYPE_SHARE_CREATED,
 					self::TYPE_SHARE_CHANGED,
 					self::TYPE_SHARE_DELETED,
-					self::TYPE_SHARE_RESHARED) &&
-				(!\OCP\App::isEnabled('files_sharding') ||
-						$type != \OCA\FilesSharding\Lib::TYPE_SERVER_SYNC))
+					self::TYPE_SHARE_RESHARED)) &&
+					(!\OCP\App::isEnabled('files_sharding') ||
+						$type != \OCA\FilesSharding\Lib::TYPE_SERVER_SYNC)
 		){
 			return parent::send($app, $subject, $subjectparams, $message,
 				$messageparams, $file, $link, $affecteduser, $type,
