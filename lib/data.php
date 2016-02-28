@@ -76,19 +76,41 @@ class Data extends \OCA\Activity\Data
 			}
 		}
 	}
-	
-	
-
-	// TODO: check if we need any of the stuff below
 
 	public static function send($app, $subject, $subjectparams = array(), $message = '',
 			$messageparams = array(), $file = '', $link = '', $affecteduser = '', $type = '',
-			$prio = Data::PRIORITY_MEDIUM) {
-		return parent::send($app, $subject, $subjectparams, $message,
-			$messageparams, $file, $link, $affecteduser, $type,
-			$prio);
+			$prio = Data::PRIORITY_MEDIUM, $user = '') {
+		
+		if(empty($user)){
+			$user = \OCP\USER::getUser();
+		}
+		
+		if(!\OCP\App::isEnabled('files_sharding') || \OCA\FilesSharding\Lib::isMaster() ||
+				!in_array($parameters['type'], array(
+					OCA\UserNotification\Data::TYPE_SHARED,
+					OCA\UserNotification\Data::TYPE_SHARE_EXPIRED,
+					OCA\UserNotification\Data::TYPE_SHARE_UNSHARED,
+					OCA\UserNotification\Data::TYPE_SHARE_CREATED,
+					OCA\UserNotification\Data::TYPE_SHARE_CHANGED,
+					OCA\UserNotification\Data::TYPE_SHARE_DELETED,
+					OCA\UserNotification\Data::TYPE_SHARE_RESHARED) &&
+				(!\OCP\App::isEnabled('files_sharding') ||
+						$parameters['type'] != \OCA\FilesSharding\Lib::TYPE_SERVER_SYNC))
+		){
+			return parent::send($app, $subject, $subjectparams, $message,
+				$messageparams, $file, $link, $affecteduser, $type,
+				$prio);
+		}
+			
+		$row = array('app'=>$app, 'subject'=>$subject, 'subjectparams'=>$subjectparams,
+				'message'=>$message, 'messageparams'=>$messageparams, 'file'=>$file,
+				'link'=>$link, 'affecteduser'=>$affecteduser, 'type'=>$type,
+				'priority'=>$prio, 'user'=>$user);
+		return self::add($row);
+		
 	}
-
+	
+	// TODO: check if we need the stuff below
 	public static function storeMail($app, $subject, array $subjectParams, $affectedUser,
 			$type, $latestSendTime) {
 		return parent::storeMail($app, $subject, $subjectParams, $affectedUser,
