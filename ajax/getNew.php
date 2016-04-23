@@ -25,12 +25,23 @@ $filter = $data->getFilterFromParam();
 
 // Read the next 30 items for the endless scrolling
 $count = 5;
-$activity = $data->read($groupHelper, $page * $count, $count, $filter);
+$activities = $data->read($groupHelper, $page * $count, $count, $filter);
 
-if(empty($activity)){
-	\OCP\JSON::error();
+// Fix up sharing links. With files_sharding enabled, we don't display shared
+// items alongside local items, and the absolute link stored in the DB is
+// generated using the server address seen by the WS script, i.e. an address
+// on the internal net.
+if(\OCP\App::isEnabled('files_sharding')){
+	$host = $_SERVER['HTTP_HOST'];
+	foreach($activities as &$activity){
+		if($activity['subject']=='shared_with_by'){
+			$activity['link'] = '/index.php/apps/files/?dir=%2F&view=sharingin';
+		}
+		else{
+			$activity['link'] = preg_replace('/^(https*:\/\/)[^\/]+(\/.*)/', '$1'.$host.'$2', $activity['link']);
+		}
+	}
 }
-else {
-  \OCP\JSON::success($activity);
-}
+
+\OCP\JSON::success($activities);
 

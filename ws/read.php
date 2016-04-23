@@ -15,7 +15,7 @@ $user = $_GET['user'];
 $start = $_GET['start'];
 $count = $_GET['count'];
 $filter = $_GET['filter'];
-$grouphelper = isset($_GET['grouphelper'])?$_GET['grouphelper']:'\OCA\UserNotification\Data';
+$grouphelper = isset($_GET['grouphelper'])?$_GET['grouphelper']:'\OCA\UserNotification\GroupHelper';
 
 if(!empty($user)){
 	\OC_User::setUserId($user);

@@ -9,15 +9,14 @@ class GroupHelper extends \OCA\Activity\GroupHelper
 {
 	public function __construct(\OCP\Activity\IManager $activityManager, \OCA\Activity\DataHelper $dataHelper, $allowGrouping) {
 		$this->allowGrouping = $allowGrouping;
-
 		$this->activityManager = $activityManager;
 		$this->dataHelper = $dataHelper;
 	}
 
+	// This causes Data::read to return only unseen messages
 	public function addActivity($activity) {
 		if($activity['priority']>\OCA\UserNotification\Data::PRIORITY_SEEN){
 			parent::addActivity($activity);
 		}
 	}
-
 }

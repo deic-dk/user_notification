@@ -10,5 +10,4 @@ if(\OCP\User::isLoggedIn() && strpos($_SERVER['REQUEST_URI'], '/index.php/settin
 	strpos($_SERVER['REQUEST_URI'], '/ws/')===FALSE){
   OCP\Util::addStyle('user_notification', 'notifications');
   OCP\Util::addScript('user_notification', 'notifications');
-  OCP\Util::addScript('user_group_admin', 'user_group_notification'); 
 }
