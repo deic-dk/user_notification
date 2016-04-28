@@ -133,31 +133,6 @@ function replaceFilename(item, filename){
 	return str;
 }
 
-
-function replaceGroupname(item, filename){
-	str = item.subjectformatted.full;
-	switch(item.subject){
-		case 'created_self':
-		case 'deleted_self':
-		case 'shared_user_self':
-		case 'deleted_by':
-			str = str.split('group');
-			str = str[0]+'a group';
-			break;
-		case 'shared_with_by':
-			if(str.indexOf("joined") > -1 || str.indexOf("invitation") > -1){
-				str = str.split('group');
-                str = str[0]+'a group';
-			}else{
-				str = str.split('invited to');
-				temp = str[1].split('<div');
-				str = str[0]+'invited to a group<div'+temp[1];
-			}
-	}
-
-	return str;
-}
-
 function replaceInvoicename(item){
   str = item.subjectformatted.full;
   switch(item.subject){
@@ -179,16 +154,15 @@ function files_app(item,filename,row){
 }
 
 function user_group_admin_app(item,filename,row){
-	row.find('.fileicon').children('i').removeClass('icon-doc text-bg').addClass('icon-users deic_green icon').attr('style','color: rgb(181, 204, 45);');
-	row.find('div.text-dark-gray').html(replaceGroupname(item,filename));
-	$(document).find('#invite_div').css('display', 'block');
-	if(item.subject == 'shared_with_by' && item.subjectformatted.full.indexOf('id="invite_div"') > -1){
-		row.find('.notification-name').html(item.subjectparams[0]+' by '+item.user);
-		row.find('.notification-name').after( '<div id'+item.subjectformatted.full.split('<div id')[1] );
-	}else{
-		row.find('.notification-name').html(item.subjectparams[0]);
-	}
-	row.children('a').attr('href','/index.php/apps/user_group_admin');
+	var groupIcon = row.find('.fileicon').children('i').removeClass('icon-doc text-bg').addClass('icon-users deic_green icon').attr('style','color: rgb(181, 204, 45);');
+	row.find('div.text-dark-gray').html(item.subjectformatted.full);
+	row.find('.notification-name').html(item.subjectparams[0]);
+	row.children('a').attr('href', OC.webroot+'/index.php/apps/user_group_admin');
+	var notificationRow = row.find('.notification-name').addClass('invite_here');
+	var inviteRow = row.find('.invite_div');
+	inviteRow.attr('activity_id', item.activity_id);
+	inviteRow.show()
+	notificationRow.after(inviteRow);
 	return row;
 }
 
@@ -202,7 +176,7 @@ function files_accounting_app(item,filename,row){
 function files_sharding_app(item,filename,row){
 	row.find('div.text-dark-gray').html(item.subject);
 	row.find('.avatardiv').remove();
-	row.children('a').attr('href','/index.php/apps/activity');
+	row.children('a').attr('href', OC.webroot+'/index.php/apps/activity');
 	return row;
 }
 
@@ -225,12 +199,13 @@ function processCase(item,filename,row){
 	}
 }
 
-function addRow(item,filename){
+function addRow(item, filename){
 	var row=$('li.notifications').find('li.template').clone();
 	row.removeClass('template');
 	if (parseInt(item['priority'], 10)>PRIORITY_MIN) {
 		row.addClass('unread');
-	}else{
+	}
+	else{
 		row.addClass('read');
 	};
 	row.removeClass('hidden');
@@ -242,7 +217,7 @@ function addRow(item,filename){
 }
 
 function addActivityRow(){
-	var row=$('li.notifications').find('li.template').clone();
+	var row = $('li.notifications').find('li.template').clone();
 	row.removeClass('template');
 	row.addClass('result');
 	row.children('a').attr('href', OC.generateUrl('/apps/activity'));
@@ -268,7 +243,8 @@ $(document).ready(function() {
 				}
 				if(count > 0){
 					$('span.num-notifications').toggleClass('hidden').html(count);
-				}else{
+				}
+				else{
 					$('.bell').removeClass('ringing');
 				}
 			}
@@ -285,10 +261,11 @@ $(document).ready(function() {
 					if(index!='status'){
 						if($.isArray(item.subjectparams[0])){
 							$.each(item.subjectparams[0], function(index2,name){
-								addRow(item,name);
+								addRow(item, name);
 							});
-						}else{
-							addRow(item,item.subjectparams[0]);
+						}
+						else{
+							addRow(item, item.subjectparams[0]);
 						}
 					}
 				});
@@ -302,4 +279,5 @@ $(document).ready(function() {
 			}
 		});
 	});
+	
 })

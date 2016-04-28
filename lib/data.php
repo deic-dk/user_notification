@@ -37,6 +37,28 @@ class Data extends \OCA\Activity\Data
 		return $localResult && $masterResult;
 	}
 	
+	public static function dbMarkUnseen($user, $idsJson){
+		$ret = true;
+		$ids = json_decode(stripslashes($_POST['activity_ids']));
+		foreach($ids as $id){
+			$ret = self::setPriority($user, self::PRIORITY_MEDIUM, $id) && $ret;
+		}
+		return $ret;
+	}
+	
+	public static function markUnseen($user, $idsJson){
+		$localResult = self::dbMarkUnseen($user, $idsJson);
+		if(!\OCP\App::isEnabled('files_sharding') || \OCA\FilesSharding\Lib::isMaster()){
+			return $localResult;
+		}
+		else{
+			$masterResult = \OCA\FilesSharding\Lib::ws('unseen',
+					array('user'=>$user, 'activity_ids'=>$idsJson), false, true, null,
+					'user_notification');
+		}
+		return $localResult && $masterResult;
+	}
+	
 	public function read(\OCA\Activity\GroupHelper $groupHelper, $start, $count, $filter = 'all') {
 		$localResult = parent::read($groupHelper, $start, $count, $filter);
 		if(!\OCP\App::isEnabled('files_sharding') || \OCA\FilesSharding\Lib::isMaster()){

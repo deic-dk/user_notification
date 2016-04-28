@@ -35,7 +35,7 @@ if(\OCP\App::isEnabled('files_sharding')){
 	$host = $_SERVER['HTTP_HOST'];
 	foreach($activities as &$activity){
 		if($activity['subject']=='shared_with_by'){
-			$activity['link'] = '/index.php/apps/files/?dir=%2F&view=sharingin';
+			$activity['link'] = \OC::$WEBROOT.'/index.php/apps/files/?dir=%2F&view=sharingin';
 		}
 		else{
 			$activity['link'] = preg_replace('/^(https*:\/\/)[^\/]+(\/.*)/', '$1'.$host.'$2', $activity['link']);
