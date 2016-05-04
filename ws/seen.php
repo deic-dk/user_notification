@@ -10,9 +10,16 @@ if(!OCA\FilesSharding\Lib::checkIP()){
 	exit;
 }
 
-$user = $_GET['user'];
+$activityId = isset($_GET['activity_id'])?$_GET['activity_id']:null;
 
-$ret = OCA\UserNotification\Data::dbMarkAllSeen($user);
+if(!empty($activityId)){
+	$ret = OCA\UserNotification\Data::dbMarkSeen($activityId);
+}
+else{
+	$user = $_GET['user'];
+	$force = isset($_GET['force'])?$_GET['force']==='yes':false;
+	$ret = OCA\UserNotification\Data::dbMarkAllSeen($user, $force);
+}
 
 if(!empty($user)){
 	OC_JSON::success(array('data'=>$ret));

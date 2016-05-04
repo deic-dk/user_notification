@@ -16,22 +16,45 @@ class Data extends \OCA\Activity\Data
 		$sql = 'UPDATE `*PREFIX*activity` SET `priority` = ? WHERE `affecteduser` = ?'.
 			(empty($activityId)?'':' AND `activity_id` = ?');
 		$query = \OCP\DB::prepare($sql);
-		$result = $query->execute(empty($activityId)?array($priority, $user):
+		return $query->execute(empty($activityId)?array($priority, $user):
 																									array($priority, $user, $activityId));
-		return $result;
 	}
 	
-	public static function dbMarkAllSeen($user){
-		return self::setPriority($user, self::PRIORITY_SEEN);
+	public static function dbMarkSeen($id){
+		$sql = 'UPDATE `*PREFIX*activity` SET `priority` = ? WHERE `activity_id` = ?';
+		$query = \OCP\DB::prepare($sql);
+		return $query->execute(array(self::PRIORITY_SEEN, $id));
 	}
 	
-	public static function markAllSeen($user){
-		$localResult = self::dbMarkAllSeen($user);
+	public static function markSeen($id){
+		$localResult = self::dbMarkSeen($id);
 		if(!\OCP\App::isEnabled('files_sharding') || \OCA\FilesSharding\Lib::isMaster()){
 			return $localResult;
 		}
 		else{
-			$masterResult = \OCA\FilesSharding\Lib::ws('seen', array('user'=>$user), false, true, null,
+			$masterResult = \OCA\FilesSharding\Lib::ws('seen', array('activity_id'=>$id), false, true, null,
+					'user_notification');
+		}
+		return $localResult && $masterResult;
+	}
+	
+	public static function dbMarkAllSeen($user, $force=false){
+		$sql = 'UPDATE `*PREFIX*activity` SET `priority` = ? WHERE `affecteduser` = ?'.
+			($force?'':' AND `priority`<?');
+		$query = \OCP\DB::prepare($sql);
+		return $query->execute($force?
+				array(self::PRIORITY_SEEN, $user):
+				array(self::PRIORITY_SEEN, $user, self::PRIORITY_VERYHIGH)
+			);
+	}
+	
+	public static function markAllSeen($user, $force=false){
+		$localResult = self::dbMarkAllSeen($user, $force);
+		if(!\OCP\App::isEnabled('files_sharding') || \OCA\FilesSharding\Lib::isMaster()){
+			return $localResult;
+		}
+		else{
+			$masterResult = \OCA\FilesSharding\Lib::ws('seen', array('user'=>$user, 'force'=>($force?'yes':'no')), false, true, null,
 					'user_notification');
 		}
 		return $localResult && $masterResult;
@@ -41,7 +64,7 @@ class Data extends \OCA\Activity\Data
 		$ret = true;
 		$ids = json_decode(stripslashes($_POST['activity_ids']));
 		foreach($ids as $id){
-			$ret = self::setPriority($user, self::PRIORITY_MEDIUM, $id) && $ret;
+			$ret = self::setPriority($user, self::PRIORITY_VERYHIGH, $id) && $ret;
 		}
 		return $ret;
 	}
