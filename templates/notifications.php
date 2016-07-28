@@ -14,7 +14,7 @@
 			<div class="avatardiv"></div>
 		  </div>
 		  <div class="col-sm-8 col-xs-10">
-			<div class="text-dark-gray"></div>
+			<div class="text-dark-gray notification-text"></div>
 			<span class="fileicon"><i class="text-bg">&nbsp;</i></span>
 			<span class="text-dark-gray notification-name"></span>
 		  </div>

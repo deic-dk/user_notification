@@ -170,7 +170,9 @@ function files_accounting_app(item,filename,row){
 	row.find('div.text-dark-gray').html(replaceInvoicename(item));
 	row.find('.fileicon').children('i').removeClass('icon-doc').addClass('icon-chart-area');
 	row.find('.notification-name').html(item.subjectparams[0]);
-    return row;
+	var paidRow = row.find('.unpaid_invoice');
+	paidRow.attr('activity_id', item.activity_id);
+	return row;
 }
 
 function files_sharding_app(item,filename,row){
