@@ -92,8 +92,12 @@ class Data extends \OCA\Activity\Data
 			$grouphelperClass = get_class($groupHelper);
 			$arr = array('user'=>$user, 'start'=>$start, 'count'=>$count, 'filter'=>$filter, 'grouphelper'=>$grouphelperClass);
 			$masterResult = \OCA\FilesSharding\Lib::ws('read', $arr, false, true, null, 'user_notification');
+			\OCP\Util::writeLog('user_notification', 'Merging '.serialize($localResult).'<-->'.serialize($masterResult), \OC_Log::DEBUG);
 			if(empty($localResult)){
 				return $masterResult;
+			}
+			if(empty($masterResult)){
+				return $localResult;
 			}
 			else{
 				return array_unique(array_merge($localResult, $masterResult));
