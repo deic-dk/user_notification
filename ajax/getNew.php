@@ -42,7 +42,7 @@ foreach($activities as &$activity){
 		}
 	}
 	if(\OCP\App::isEnabled('files_sharding')){
-		if($activity['subject']=='shared_with_by'){
+		if($activity['subject']=='shared_with_by' && empty($activity['link'])){
 			$activity['link'] = \OC::$WEBROOT.'/index.php/apps/files/?dir=%2F&view=sharingin';
 		}
 		else{
