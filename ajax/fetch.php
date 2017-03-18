@@ -34,7 +34,7 @@ $groupHelper = new \OCA\activity\GroupHelper(
 	\OC::$server->getActivityManager(),
 	new \OCA\Activity\DataHelper(
 		\OC::$server->getActivityManager(),
-		new \OCA\Activity\ParameterHelper(new \OC\Files\View(''), $l),
+		new \OCA\Activity\ParameterHelper(new \OC\Files\View(''), \OC::$server->getConfig(), $l),
 		$l
 	),
 	true
