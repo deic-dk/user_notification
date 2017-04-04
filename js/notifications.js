@@ -231,7 +231,7 @@ function addActivityRow(){
 
 $(document).ready(function() {
 	var parent=$('<li class="notifications dropdown">');
-	$('header').find('ul.navbar-nav').prepend(parent);
+	$('header').find('ul.navbar-nav .pull-right').before(parent);
 	parent.load(OC.filePath('user_notification','templates','notifications.php'),function(){
 		$.ajax({
 			url: OC.filePath('user_notification', 'ajax', 'getNew.php'),
