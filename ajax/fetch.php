@@ -45,9 +45,25 @@ $filter = $data->getFilterFromParam();
 
 // Read the next 30 items for the endless scrolling
 $count = 30;
-$activity = $data->read($groupHelper, $page * $count, $count, $filter);
+$activities = $data->read($groupHelper, $page * $count, $count, $filter);
+
+$host = $_SERVER['HTTP_HOST'];
+// Fix up sharing links.
+foreach($activities as &$activity){
+	if(\OCP\App::isEnabled('files_sharding')){
+		if($activity['subject']=='shared_with_by' && !empty($activity['link'])){
+			$activity['link'] = \OC::$WEBROOT.'/index.php/apps/files/?dir=%2F&view=sharingin';
+			$activity['subjectformatted']['markup']['trimmed'] =
+				str_replace('/index.php/apps/files?dir=', '/index.php/apps/files?view=sharingin&nodir=',
+				$activity['subjectformatted']['markup']['trimmed']);
+		}
+		else{
+			$activity['link'] = preg_replace('/^(https*:\/\/)[^\/]+(\/.*)/', '$1'.$host.'$2', $activity['link']);
+		}
+	}
+}
 
 // show the next 30 entries
 $tmpl = new \OCP\Template('activity', 'activities.part', '');
-$tmpl->assign('activity', $activity);
+$tmpl->assign('activity', $activities);
 $tmpl->printPage();
