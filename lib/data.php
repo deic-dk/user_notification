@@ -12,12 +12,20 @@ class Data extends \OCA\Activity\Data
 		$this->activityManager = $activityManager;
 	}
 	
-	public static function setPriority($user, $priority, $activityId=null){
-		$sql = 'UPDATE `*PREFIX*activity` SET `priority` = ? WHERE `affecteduser` = ?'.
+	public static function setPriority($user, $priority, $activityId=null, $timeStamp=null){
+		$sql = 'UPDATE `*PREFIX*activity` SET `priority` = ?'.(empty($timeStamp)?'':', timestamp = ?').
+			' WHERE `affecteduser` = ?'.
 			(empty($activityId)?'':' AND `activity_id` = ?');
 		$query = \OCP\DB::prepare($sql);
-		return $query->execute(empty($activityId)?array($priority, $user):
-																									array($priority, $user, $activityId));
+		$params = array($priority);
+		if(!empty($timeStamp)){
+			$params[] = $timeStamp;
+		}
+		$params[] = $user;
+		if(!empty($activityId)){
+			$params[] = $activityId;
+		}
+		return $query->execute($params);
 	}
 	
 	public static function dbMarkSeen($id){
@@ -63,8 +71,9 @@ class Data extends \OCA\Activity\Data
 	public static function dbMarkUnseen($user, $idsJson){
 		$ret = true;
 		$ids = json_decode(stripslashes($_POST['activity_ids']));
+		$now = time();
 		foreach($ids as $id){
-			$ret = self::setPriority($user, self::PRIORITY_VERYHIGH, $id) && $ret;
+			$ret = self::setPriority($user, self::PRIORITY_VERYHIGH, $id, $now) && $ret;
 		}
 		return $ret;
 	}
