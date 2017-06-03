@@ -105,16 +105,18 @@ class Data extends \OCA\Activity\Data
 		return $ret;
 	}
 	
-	public function read(\OCA\Activity\GroupHelper $groupHelper, $start, $count, $filter = 'all') {
+	public function read(\OCA\Activity\GroupHelper $groupHelper, $start, $count, $filter = 'all', $includeVeryHigh = false) {
 		$localResult = parent::read($groupHelper, $start, $count, $filter);
-		$localVeryhighPriorityResult = $this->dbReadPriorityVeryhigh($groupHelper);
-		if(empty($localResult)){
-			$localResult = $localVeryhighPriorityResult;
+		if($includeVeryHigh){
+			$localVeryhighPriorityResult = $this->dbReadPriorityVeryhigh($groupHelper);
+			if(empty($localResult)){
+				$localResult = $localVeryhighPriorityResult;
+			}
+			elseif(!empty($localVeryhighPriorityResult)){
+				$localResult =  array_unique(array_merge($localVeryhighPriorityResult, $localResult));
+			}
+			//\OCP\Util::writeLog('user_notification', 'VERYHIGH priority: '.serialize($localVeryhighPriorityResult), \OCP\Util::WARN);
 		}
-		elseif(!empty($localVeryhighPriorityResult)){
-			$localResult =  array_unique(array_merge($localVeryhighPriorityResult, $localResult));
-		}
-		//\OCP\Util::writeLog('user_notification', 'VERYHIGH priority: '.serialize($localVeryhighPriorityResult), \OCP\Util::WARN);
 		if(!\OCP\App::isEnabled('files_sharding') || \OCA\FilesSharding\Lib::isMaster()){
 			$res =  $localResult;
 		}

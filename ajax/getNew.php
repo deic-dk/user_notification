@@ -25,7 +25,7 @@ $filter = $data->getFilterFromParam();
 
 // Read the next 30 items for the endless scrolling
 $count = 5;
-$activities = $data->read($groupHelper, $page * $count, $count, $filter);
+$activities = $data->read($groupHelper, $page * $count, $count, $filter, true);
 
 // Fix up sharing links. With files_sharding enabled, we don't display shared
 // items alongside local items, and the absolute link stored in the DB is
