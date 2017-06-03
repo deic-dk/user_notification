@@ -91,10 +91,32 @@ class Data extends \OCA\Activity\Data
 		return $localResult && $masterResult;
 	}
 	
+	private function dbReadPriorityVeryhigh(GroupHelper $groupHelper) {
+		// get current user
+		$user = \OC_User::getUser();	
+		// fetch from DB
+		$query = \OC_DB::prepare(
+				'SELECT * '
+				. ' FROM `*PREFIX*activity` '
+				. ' WHERE `affecteduser` = ? AND `priority` = ? '
+				. ' ORDER BY `timestamp` DESC');
+		$result = $query->execute(array($user, \OCA\UserNotification\Data::PRIORITY_VERYHIGH));
+		$ret = $this->getActivitiesFromQueryResult($result, $groupHelper);
+		return $ret;
+	}
+	
 	public function read(\OCA\Activity\GroupHelper $groupHelper, $start, $count, $filter = 'all') {
 		$localResult = parent::read($groupHelper, $start, $count, $filter);
+		$localVeryhighPriorityResult = $this->dbReadPriorityVeryhigh($groupHelper);
+		if(empty($localResult)){
+			$localResult = $localVeryhighPriorityResult;
+		}
+		elseif(!empty($localVeryhighPriorityResult)){
+			$localResult =  array_unique(array_merge($localVeryhighPriorityResult, $localResult));
+		}
+		//\OCP\Util::writeLog('user_notification', 'VERYHIGH priority: '.serialize($localVeryhighPriorityResult), \OCP\Util::WARN);
 		if(!\OCP\App::isEnabled('files_sharding') || \OCA\FilesSharding\Lib::isMaster()){
-			return $localResult;
+			$res =  $localResult;
 		}
 		else{
 			$user = \OCP\USER::getUser();
@@ -103,15 +125,16 @@ class Data extends \OCA\Activity\Data
 			$masterResult = \OCA\FilesSharding\Lib::ws('read', $arr, false, true, null, 'user_notification');
 			\OCP\Util::writeLog('user_notification', 'Merging '.serialize($localResult).'<-->'.serialize($masterResult), \OC_Log::DEBUG);
 			if(empty($localResult)){
-				return $masterResult;
+				$res = $masterResult;
 			}
-			if(empty($masterResult)){
-				return $localResult;
+			elseif(empty($masterResult)){
+				$res =  $localResult;
 			}
 			else{
-				return array_unique(array_merge($localResult, $masterResult));
+				$res =  array_unique(array_merge($localResult, $masterResult));
 			}
 		}
+		return $res;
 	}
 
 	public static function send($app, $subject, $subjectparams = array(), $message = '',
