@@ -239,9 +239,10 @@ $(document).ready(function() {
 				var count=0;
 				for (i = 0; i < Object.keys(result).length-1; i++) {
 					var row = result[i];
-				    if(parseInt(row['priority'], 10)>PRIORITY_MIN){
-				    	count +=1;
-				    }
+					/*row is sometimes undefined - weird... TODO: investigate*/
+			    if(typeof row === 'undefined' || parseInt(row['priority'], 10)>PRIORITY_MIN){
+			    	count +=1;
+			    }
 				}
 				if(count > 0){
 					$('span.num-notifications').toggleClass('hidden').html(count);
