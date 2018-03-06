@@ -113,7 +113,24 @@ class Data extends \OCA\Activity\Data
 				$localResult = $localVeryhighPriorityResult;
 			}
 			elseif(!empty($localVeryhighPriorityResult)){
-				$localResult =  array_unique(array_merge($localVeryhighPriorityResult, $localResult));
+				\OCP\Util::writeLog('user_notification', 'Merging: '.
+						serialize($localVeryhighPriorityResult).' -- '.
+						serialize($localResult), \OCP\Util::DEBUG);
+				//$localResult =  array_unique(array_merge($localVeryhighPriorityResult, $localResult));
+				$mergedResult = [];
+				foreach($localVeryhighPriorityResult as $key=>$entry){
+					if(in_array($entry, $mergedResult)){
+						continue;
+					}
+					$mergedResult[$key] = $entry;
+				}
+				foreach($localResult as $key=>$entry){
+					if(in_array($entry, $mergedResult)){
+						continue;
+					}
+					$mergedResult[$key] = $entry;
+				}
+				$localResult = $mergedResult;
 			}
 			//\OCP\Util::writeLog('user_notification', 'VERYHIGH priority: '.serialize($localVeryhighPriorityResult), \OCP\Util::WARN);
 		}
