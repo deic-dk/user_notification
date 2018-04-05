@@ -224,7 +224,8 @@ function addActivityRow(){
 	row.addClass('result');
 	row.children('a').attr('href', OC.generateUrl('/apps/activity'));
 	row.find('.row').children().remove();
-	row.find('.row').append('<div class="col-sm-11 col-sm-offset-1 col-xs-10 col-sx-offset-2"><div class="text-dark-gray"><i class="icon-flash deic_green icon"></i>All Activities</div></div>');
+	row.find('.row').append('<div class="col-sm-11 col-sm-offset-1 col-xs-10 col-sx-offset-2"><div class="text-dark-gray"><i class="icon-flash deic_green icon"></i>'+
+			t('user_notification', 'All Activities')+'</div></div>');
 	row.removeClass('hidden');
 	$('li.notifications').children('ul').append(row);
 }
