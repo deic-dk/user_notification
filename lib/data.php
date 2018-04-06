@@ -150,7 +150,15 @@ class Data extends \OCA\Activity\Data
 				$res =  $localResult;
 			}
 			else{
-				$res =  array_unique(array_merge($localResult, $masterResult));
+				//$res =  array_unique(array_merge($localResult, $masterResult));
+				$res = $masterResult;
+				foreach($localResult as $key=>$entry){
+					if(in_array($entry, $res)){
+						continue;
+					}
+					$res[$key] = $entry;
+				}
+				
 			}
 		}
 		return $res;
