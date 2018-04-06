@@ -125,14 +125,14 @@ class Data extends \OCA\Activity\Data
 					$mergedResult[$key] = $entry;
 				}
 				foreach($localResult as $key=>$entry){
-					if(in_array($entry, $mergedResult)){
+					if(/*array_key_exists($key, $mergedResult) || */in_array($entry, $mergedResult)){
 						continue;
 					}
 					$mergedResult[$key] = $entry;
 				}
 				$localResult = $mergedResult;
 			}
-			//\OCP\Util::writeLog('user_notification', 'VERYHIGH priority: '.serialize($localVeryhighPriorityResult), \OCP\Util::WARN);
+			\OCP\Util::writeLog('user_notification', 'Local activity: '.serialize($localResult), \OCP\Util::INFO);
 		}
 		if(!\OCP\App::isEnabled('files_sharding') || \OCA\FilesSharding\Lib::isMaster()){
 			$res =  $localResult;
@@ -143,6 +143,7 @@ class Data extends \OCA\Activity\Data
 			$arr = array('user'=>$user, 'start'=>$start, 'count'=>$count, 'filter'=>$filter, 'grouphelper'=>$grouphelperClass);
 			$masterResult = \OCA\FilesSharding\Lib::ws('read', $arr, false, true, null, 'user_notification');
 			\OCP\Util::writeLog('user_notification', 'Merging '.serialize($localResult).'<-->'.serialize($masterResult), \OC_Log::DEBUG);
+			\OCP\Util::writeLog('user_notification', 'Master activity: '.serialize($masterResult), \OCP\Util::INFO);
 			if(empty($localResult)){
 				$res = $masterResult;
 			}
@@ -153,7 +154,7 @@ class Data extends \OCA\Activity\Data
 				//$res =  array_unique(array_merge($localResult, $masterResult));
 				$res = $masterResult;
 				foreach($localResult as $key=>$entry){
-					if(in_array($entry, $res)){
+					if(/*array_key_exists($key, $res) || */in_array($entry, $res)){
 						continue;
 					}
 					$res[$key] = $entry;

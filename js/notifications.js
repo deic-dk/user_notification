@@ -106,6 +106,10 @@ function ext2cssClass (filename) {
 
 function replaceFilename(item, filename){
 	var needle = item.subject.split('_')[0];
+	// All this is just for displaying folder or file and irrelevant for non-English.
+	if(item.subjectformatted.full.split(needle).length==1){
+		return item.subjectformatted.full;
+	}
 	str = item.subjectformatted.full.split(needle)[0]+needle;
 
 	var folderfile;
