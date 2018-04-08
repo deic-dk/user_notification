@@ -34,11 +34,28 @@ $activities = $data->read($groupHelper, $page * $count, $count, $filter, true);
 $host = $_SERVER['HTTP_HOST'];
 foreach($activities as &$activity){
 	if(\OCP\App::isEnabled('files_accounting')){
+		require_once 'files_accounting/lib/storage_lib.php';
 		if($activity['subject']=='payment_complete' || $activity['subject']=='automatic_payment_complete'){
 			\OCP\Util::writeLog('user_notification', 'Marking as seen - activity id/files_accouting item_number: '.
 					$activity['activity_id'].'/'.$activity['subjectparams']['item_number'], \OCP\Util::WARN);
 			\OCA\UserNotification\Data::markSeen($activity['activity_id']);
 			//$activity['link'] = \OC::$WEBROOT.'/index.php/settings/personal#userapps';
+		}
+		// Don't keep reminding of zero bills
+		if($activity['subject']=='new_invoice'){
+			if(!empty($activity['subjectparams']) &&
+					!empty($activity['subjectparams']['item_number'])){
+				$bill = \OCA\Files_Accounting\Storage_Lib::getBill($activity['subjectparams']['item_number']);
+				\OCP\Util::writeLog('user_notification', 'Bill: - activity id/files_accouting item_number: '.
+						$activity['activity_id'].'/'.$activity['subjectparams']['item_number'].
+						'-->'.serialize($bill), \OCP\Util::WARN);if(!empty($bill) &&
+						($bill['amount_due']==0 || $bill['status']==\OCA\Files_Accounting\Storage_Lib::PAYMENT_STATUS_PAID)){
+					\OCP\Util::writeLog('user_notification', 'Marking as seen - activity id/files_accouting item_number: '.
+							$activity['activity_id'].'/'.$activity['subjectparams']['item_number'].
+							'-->'.serialize($bill), \OCP\Util::WARN);
+					\OCA\UserNotification\Data::markSeen($activity['activity_id']);
+				}
+			}
 		}
 	}
 	if(\OCP\App::isEnabled('files_sharding')){
