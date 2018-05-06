@@ -15,6 +15,7 @@ class GroupHelper extends \OCA\Activity\GroupHelper
 
 	// This causes Data::read to return only unseen messages
 	public function addActivity($activity) {
+		\OCP\Util::writeLog('user_notification', 'Notification: '.serialize($activity), \OCP\Util::DEBUG);
 		if($activity['priority']>\OCA\UserNotification\Data::PRIORITY_SEEN){
 			parent::addActivity($activity);
 		}

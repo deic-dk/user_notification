@@ -132,8 +132,8 @@ class Data extends \OCA\Activity\Data
 				}
 				$localResult = $mergedResult;
 			}
-			\OCP\Util::writeLog('user_notification', 'Local activity: '.serialize($localResult), \OCP\Util::INFO);
 		}
+		\OCP\Util::writeLog('user_notification', 'Local activity: '.serialize($localResult), \OCP\Util::INFO);
 		if(!\OCP\App::isEnabled('files_sharding') || \OCA\FilesSharding\Lib::isMaster()){
 			$res =  $localResult;
 		}
@@ -142,7 +142,7 @@ class Data extends \OCA\Activity\Data
 			$grouphelperClass = get_class($groupHelper);
 			$arr = array('user'=>$user, 'start'=>$start, 'count'=>$count, 'filter'=>$filter, 'grouphelper'=>$grouphelperClass);
 			$masterResult = \OCA\FilesSharding\Lib::ws('read', $arr, false, true, null, 'user_notification');
-			\OCP\Util::writeLog('user_notification', 'Merging '.serialize($localResult).'<-->'.serialize($masterResult), \OC_Log::DEBUG);
+			\OCP\Util::writeLog('user_notification', 'Merging '.serialize($localResult).'<-->'.serialize($masterResult), \OC_Log::INFO);
 			\OCP\Util::writeLog('user_notification', 'Master activity: '.serialize($masterResult), \OCP\Util::INFO);
 			if(empty($localResult)){
 				$res = $masterResult;
@@ -153,11 +153,11 @@ class Data extends \OCA\Activity\Data
 			else{
 				//$res =  array_unique(array_merge($localResult, $masterResult));
 				$res = $masterResult;
-				foreach($localResult as $key=>$entry){
+				foreach($localResult as $entry){
 					if(/*array_key_exists($key, $res) || */in_array($entry, $res)){
 						continue;
 					}
-					$res[$key] = $entry;
+					$res[] = $entry;
 				}
 				
 			}
