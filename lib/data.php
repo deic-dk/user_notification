@@ -182,7 +182,9 @@ class Data extends \OCA\Activity\Data
 					self::TYPE_SHARE_CHANGED,
 					self::TYPE_SHARE_DELETED,
 					self::TYPE_SHARE_RESHARED,
-					\OCA\FilesSharding\Lib::TYPE_SERVER_SYNC))
+					\OCA\FilesSharding\Lib::TYPE_SERVER_SYNC,
+					\OCA\Uploader\Util::TYPE_SHARED_FILE_DOWNLOAD
+				))
 		){
 			return parent::send($app, $subject, $subjectparams, $message,
 				$messageparams, $file, $link, $affecteduser, $type,
