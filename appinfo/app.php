@@ -3,6 +3,8 @@
 OCP\App::checkAppEnabled('user_notification');
   
 if(\OCP\User::isLoggedIn() && strpos($_SERVER['REQUEST_URI'], '/index.php/settings')===FALSE &&
+	strpos($_SERVER['REQUEST_URI'], OC::$WEBROOT ."/shared/")!==0 &&
+	strpos($_SERVER['REQUEST_URI'], OC::$WEBROOT ."/public/")!==0 &&
 	strpos($_SERVER['REQUEST_URI'], 'logout')===FALSE &&
 	strpos($_SERVER['REQUEST_URI'], '/ajax/')===FALSE &&
 	strpos($_SERVER['REQUEST_URI'], '/jqueryFileTree.php')===FALSE &&
